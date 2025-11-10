@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.firebase_auth_app"
+    namespace = "com.JORDY.app_trello"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -20,7 +20,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.firebase_auth_app"
+        applicationId = "com.JORDY.app_trello"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

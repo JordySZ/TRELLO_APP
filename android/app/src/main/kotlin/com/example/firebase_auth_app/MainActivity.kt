@@ -1,4 +1,4 @@
-package com.example.firebase_auth_app
+package com.JORDY.app_trello
 
 import io.flutter.embedding.android.FlutterActivity
 

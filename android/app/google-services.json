@@ -1,21 +1,40 @@
 {
   "project_info": {
-    "project_number": "904575249592",
-    "project_id": "base-de-datos-45e21",
-    "storage_bucket": "base-de-datos-45e21.firebasestorage.app"
+    "project_number": "859201553919",
+    "project_id": "app-trello-1316c",
+    "storage_bucket": "app-trello-1316c.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:904575249592:android:436aaffb772389fc9e584d",
+        "mobilesdk_app_id": "1:859201553919:android:788fabd223f981a0d513ca",
         "android_client_info": {
-          "package_name": "com.example.firebase_auth_app"
+          "package_name": "com.JORDY.app_trello"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAu8XRmZIVJw34J4FodiZyGCkEe_HHPn9g"
+          "current_key": "AIzaSyC2IRHe7fzo1JjNmZEIfJqlhMDiErcPR6w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859201553919:android:9777b1ebccb3ef1ad513ca",
+        "android_client_info": {
+          "package_name": "com.example.app_trello"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2IRHe7fzo1JjNmZEIfJqlhMDiErcPR6w"
         }
       ],
       "services": {
