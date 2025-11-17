@@ -558,7 +558,11 @@ class _ListColumnState extends State<_ListColumn> {
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
                     itemCount: cards.length,
                     itemBuilder: (context, index) {
-                      return _CardItem(card: cards[index]);
+                    
+                      return _CardItem(
+    card: cards[index],
+                    cardRef: widget.cardsRef.doc(cards[index].id),
+                    );
                     },
                   );
                 }
@@ -575,38 +579,162 @@ class _ListColumnState extends State<_ListColumn> {
   }
 }
 
-// --- _CardItem (Sin cambios) ---
 class _CardItem extends StatelessWidget {
-// ... (código existente sin cambios)
   final BoardCard card;
-  const _CardItem({required this.card});
+  final DocumentReference cardRef;
+
+  const _CardItem({
+    super.key,
+    required this.card,
+    required this.cardRef,
+  });
+
+  Widget _buildTimeRemaining() {
+    if (card.endDate == null) return const SizedBox.shrink();
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final end = DateTime(card.endDate!.year, card.endDate!.month, card.endDate!.day);
+    
+    final difference = end.difference(today).inDays;
+    
+    String text;
+    Color color;
+    IconData icon = Icons.access_time;
+
+    if (difference < 0) {
+      text = "Vencido (${difference.abs()}d)";
+      color = Colors.red;
+      icon = Icons.warning;
+    } else if (difference == 0) {
+      text = "Hoy";
+      color = Colors.orange.shade800;
+      icon = Icons.today;
+    } else {
+      text = "${difference}d";
+      color = Colors.grey;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: color),
+          const SizedBox(width: 4),
+          Text(text, style: TextStyle(fontSize: 11, color: color, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-// ... (código existente sin cambios)
+    Color statusColor = Colors.transparent;
+    if (card.status == 'hecho') statusColor = Colors.green;
+    if (card.status == 'por_hacer') statusColor = Colors.blue;
+    if (card.status == 'pendiente') statusColor = Colors.orange;
+
+    int totalSubtasks = card.subtasks.length;
+    int doneSubtasks = card.subtasks.where((s) => s['done'] == true).length;
+    
+    // Verificamos si hay descripción
+    bool hasDescription = card.description.trim().isNotEmpty;
+
     return Card(
       elevation: 1,
       margin: const EdgeInsets.symmetric(vertical: 4.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+        side: BorderSide(color: statusColor.withOpacity(0.5), width: 1),
+      ),
       child: InkWell(
+        borderRadius: BorderRadius.circular(8.0),
         onTap: () {
           showDialog(
-// ... (código existente sin cambios)
             context: context,
-            builder: (context) => CardDetailsDialog(card: card),
+            builder: (context) => CardDetailsDialog(card: card, cardRef: cardRef),
           );
         },
-        child: Container(
-          width: double.infinity,
-// ... (código existente sin cambios)
+        child: Padding(
           padding: const EdgeInsets.all(12.0),
-          child: Text(card.title),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // 1. ETIQUETA DE ESTADO
+              if (card.status != 'pendiente')
+                Container(
+                  margin: const EdgeInsets.only(bottom: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    card.status == 'hecho' ? 'HECHO' : 'EN PROGRESO',
+                    style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold, color: statusColor),
+                  ),
+                ),
+                
+              // 2. TÍTULO
+              Text(
+                card.title, 
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+              ),
+              
+              // 3. DESCRIPCIÓN (NUEVO)
+              if (hasDescription)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6.0),
+                  child: Text(
+                    card.description,
+                    maxLines: 2, // Máximo 2 líneas para no ensuciar el tablero
+                    overflow: TextOverflow.ellipsis, // Pone "..." si es muy largo
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 12,
+                      height: 1.3,
+                    ),
+                  ),
+                ),
+
+              // 4. METADATA (Fechas y Subtareas)
+              if (card.endDate != null || totalSubtasks > 0)
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Row(
+                    children: [
+                      // Tiempo restante
+                      _buildTimeRemaining(),
+                      
+                      if (card.endDate != null) const SizedBox(width: 8),
+
+                      // Conteo de Subtareas
+                      if (totalSubtasks > 0)
+                        Row(
+                          children: [
+                            Icon(Icons.check_circle_outline, size: 14, color: doneSubtasks == totalSubtasks ? Colors.green : Colors.grey),
+                            const SizedBox(width: 2),
+                            Text(
+                              "$doneSubtasks/$totalSubtasks",
+                              style: const TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-
 // --- _AddListWidget (Sin cambios) ---
 class _AddListWidget extends StatefulWidget {
   final Future<void> Function(String title) onAddList;
