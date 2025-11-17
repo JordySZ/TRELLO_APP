@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_auth_app/home/home_screen.dart';
+import 'package:firebase_auth_app/home/main_shell.dart';
 import 'package:firebase_auth_app/login/complete_profile_screen.dart';
 import 'package:firebase_auth_app/login/forgot_password_screen.dart';
 import 'package:firebase_auth_app/login/register_page.dart';
@@ -291,7 +292,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (!mounted) return;
     
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => HomeScreen()),
+      MaterialPageRoute(builder: (context) => MainShell()),
       (Route<dynamic> route) => false,
     );
   }
